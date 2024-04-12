@@ -1,0 +1,36 @@
+@import "../App.css";
+
+.welcome-homepage {
+  margin-top: 100px;
+  font-size: 9em;
+}
+.start-buttons {
+  margin-top: 200px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 600px;
+  a, button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: inherit;
+    cursor: pointer;
+    font-size: 2.25em;
+    width: 250px;
+    height: 80px;
+    border: 2px solid white;
+    border-radius: 25px;
+    appearance: none;
+    text-decoration: none;
+    &:nth-child(1) {
+      background-color: #640d14;
+    }
+    &:nth-child(2) {
+      background-color: #800e13;
+    }
+    &:hover{
+      filter:brightness(85%);
+    }
+  }
+}

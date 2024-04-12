@@ -1,0 +1,34 @@
+@import "../App.css";
+
+.welcome-gra {
+  margin-top: 50px;
+  font-size: 2.25em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  form {
+    margin-top: 25px;
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    input {
+      &.imie {
+        padding: 7.5px;
+        font-size: 0.5em;
+      }
+      &.submit {
+        padding: 5px;
+        width: 50%;
+      }
+    }
+  }
+}
+.startery{
+  margin-top:50px;
+  display:flex;
+  gap:50px;
+}
