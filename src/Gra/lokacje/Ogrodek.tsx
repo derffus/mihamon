@@ -20,7 +20,7 @@ function Ogrodek() {
     setPokemonRightNow("");
     setPokemonSpawned((prev) =>
       prev.filter(
-        (x: any, index: number) => index !== pokemonRightNowId
+        (x: any, index: number) => index !== pokemonRightNowId && x!=""
       )
     );
     setCatchingPokemon(false);
@@ -55,7 +55,7 @@ function Ogrodek() {
 
   function spawnPokemon() {
     setShowPokemon(false);
-    let topvalue, leftvalue;
+    let topvalue:number, leftvalue:number;
     do {
       topvalue = Math.floor(Math.random() * 350);
       leftvalue = Math.floor(Math.random() * 375);
