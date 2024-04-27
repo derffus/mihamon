@@ -7,7 +7,9 @@ import { atom, useAtom } from "jotai";
 
 export const Name = atom<string>("derf");
 export const Pokemony = atom<string[]>([]);
-export const Eq = atom<string[][]>([]);
+export const Eq = atom<[{ name: string; amount: number }]>([
+  { name: "pokeball", amount: 15 },
+]);
 
 function Gra() {
   const [pokemony, setPokemony] = useAtom(Pokemony);
@@ -140,6 +142,7 @@ export function Lokacje() {
 
 function Ekwipunek() {
   const [pokemony] = useAtom(Pokemony);
+  const [eq] = useAtom(Eq);
   const [showBag, setShowBag] = useState<boolean>(false);
   return (
     <div className="ekwipunek">
@@ -149,9 +152,11 @@ function Ekwipunek() {
       {showBag && (
         <div className="bag-opened">
           <div className="pokemony">
-          {pokemony.map((x: string) => (
-            <div><img src={`/assets/Images/${x}.png`} alt={x} /></div>
-          ))}
+            {pokemony.map((x: string) => (
+              <div>
+                <img src={`/assets/Images/${x}.png`} alt={x} />
+              </div>
+            ))}
           </div>
         </div>
       )}
@@ -186,6 +191,17 @@ function Ekwipunek() {
             <img src={`/assets/Images/${pokemony[5]}.png`} alt={pokemony[5]} />
           )}
         </button>
+      </div>
+      <div className="items-bag">
+        <span className="przedmioty">przedmioty:</span>
+        <div className="lista-itemow">
+          {eq.map((x: any) => (
+            <div className={x.name} key={x.name}>
+              <img src="assets/Images/pokeball.png" alt={x.name} />
+              {x.amount}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

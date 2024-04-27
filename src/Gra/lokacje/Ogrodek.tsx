@@ -2,29 +2,36 @@ import { useEffect, useState } from "react";
 import "./Lokacje.scss";
 import CatchingPokemon from "../CatchingPokemon";
 import { useAtom, atom } from "jotai";
-import { Pokemony } from "../Gra";
+import { Pokemony, Eq } from "../Gra";
 
 const PokemonSpawned = atom<any[][]>([]);
 
 function Ogrodek() {
-  const chanceToCatch = 1;
+  const chanceToCatch = 40;
 
   const [pokemony, setPokemony] = useAtom(Pokemony);
+  const [eq, setEq] = useAtom(Eq);
   const pokemonClicked = (pokemon: string, id: number) => {
     setPokemonRightNow(pokemon);
     setPokemonRightNowId(id);
     setCatchingPokemon(true);
   };
-  const catchPokemon = () => {
+  const catchPokemon = (ball:string) => {
     setPokemonRightNow("");
     setPokemonSpawned((prev) =>
       prev.filter(
-        (x: any, index: number) => index !== pokemonRightNowId && x === x
+        (x: any, index: number) => index !== pokemonRightNowId
       )
     );
     setCatchingPokemon(false);
     setPokemonRightNowId(-1);
     setPokemony([...pokemony, pokemonRightNow]);
+    switch(ball){
+      case "pokeball":
+        const eqCopy:any = [...eq];
+        eqCopy[0] = {...eqCopy[0], amount: eqCopy[0].amount - 1}
+        setEq(eqCopy)
+    }
   };
 
   const [ticks, setTicks] = useState<boolean>(false);
@@ -70,7 +77,7 @@ function Ogrodek() {
     setPokemonSpawned((prevPokemonSpawned) => [
       ...prevPokemonSpawned,
       [
-        Math.floor(Math.random() * 150) === 0
+        Math.floor(Math.random() * 100) === 0
           ? "s" + pokemonnamevalue
           : pokemonnamevalue,
         topvalue,

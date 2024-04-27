@@ -64,6 +64,36 @@
       border: 4px solid #b3001b;
     }
   }
+  .items-bag {
+    background-color: #202020;
+    border: 2px solid #b3001b;
+    border-radius: 25px;
+    width: 100%;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .przedmioty{
+      font-size: 1.5em;
+      font-weight: 500;
+    }
+    .lista-itemow {
+      margin-top: 25px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      div {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        img {
+          display: block;
+          width: 75px;
+        }
+      }
+    }
+  }
 }
 
 .welcome-gra {
