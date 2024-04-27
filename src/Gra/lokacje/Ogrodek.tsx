@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import "./Lokacje.scss";
 import CatchingPokemon from "../CatchingPokemon";
-import { useAtom } from "jotai";
-import { Eq } from "../Gra";
+import { useAtom, atom } from "jotai";
+import { Pokemony } from "../Gra";
+
+const PokemonSpawned = atom<any[][]>([]);
 
 function Ogrodek() {
-  const [eq, setEq] = useAtom(Eq);
+  const chanceToCatch = 1;
+
+  const [pokemony, setPokemony] = useAtom(Pokemony);
   const pokemonClicked = (pokemon: string, id: number) => {
     setPokemonRightNow(pokemon);
     setPokemonRightNowId(id);
@@ -13,12 +17,16 @@ function Ogrodek() {
   };
   const catchPokemon = () => {
     setPokemonRightNow("");
-    setPokemonSpawned(prev => prev.splice(pokemonRightNowId,1));
+    setPokemonSpawned((prev) =>
+      prev.filter(
+        (x: any, index: number) => index !== pokemonRightNowId && x === x
+      )
+    );
     setCatchingPokemon(false);
-    setEq([...eq, pokemonRightNow]);
-    
-  }
-  
+    setPokemonRightNowId(-1);
+    setPokemony([...pokemony, pokemonRightNow]);
+  };
+
   const [ticks, setTicks] = useState<boolean>(false);
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -27,11 +35,11 @@ function Ogrodek() {
     return () => clearInterval(intervalId);
   }, []);
   useEffect(() => {
-    const randomNumber = Math.floor(Math.random() * 15);
+    const randomNumber = Math.floor(Math.random() * chanceToCatch * 2);
     randomNumber === 0 && spawnPokemon();
   }, [ticks]);
 
-  const [pokemonSpawned, setPokemonSpawned] = useState<any[][]>([]);
+  const [pokemonSpawned, setPokemonSpawned] = useAtom<any[][]>(PokemonSpawned);
   const [showPokemon, setShowPokemon] = useState<boolean>(false);
 
   const [catchingPokemon, setCatchingPokemon] = useState<boolean>(false);
@@ -47,28 +55,37 @@ function Ogrodek() {
     } while (
       leftvalue < 290 &&
       leftvalue > 110 &&
-      topvalue < 300 &&
+      topvalue < 280 &&
       topvalue > 100
     );
     let rotationvalue = Math.floor(Math.random() * 2);
     let pokemonNameChance = Math.floor(Math.random() * 100);
-    let pokemonnamevalue: any;
-    if (pokemonNameChance < 45) pokemonnamevalue = "mihgey";
-    else if (pokemonNameChance < 90) pokemonnamevalue = "mihatta";
+    let pokemonnamevalue: string;
+    if (pokemonNameChance < 40) pokemonnamevalue = "mihgey";
+    else if (pokemonNameChance < 80) pokemonnamevalue = "mihatta";
+    else if (pokemonNameChance < 90) pokemonnamevalue = "mihanat";
+    else if (pokemonNameChance < 95) pokemonnamevalue = "mihotto";
     else if (pokemonNameChance < 100) pokemonnamevalue = "mihasaur";
 
     setPokemonSpawned((prevPokemonSpawned) => [
       ...prevPokemonSpawned,
-      [pokemonnamevalue, topvalue, leftvalue, rotationvalue],
+      [
+        Math.floor(Math.random() * 150) === 0
+          ? "s" + pokemonnamevalue
+          : pokemonnamevalue,
+        topvalue,
+        leftvalue,
+        rotationvalue,
+      ],
     ]);
     setShowPokemon(true);
     setTimeout(() => {
       setPokemonSpawned((prevPokemonSpawned) => {
         const newPrevPokemonSpawned = [...prevPokemonSpawned];
-        newPrevPokemonSpawned.pop();
+        newPrevPokemonSpawned.shift();
         return newPrevPokemonSpawned;
       });
-    }, Math.floor(Math.random() * 20000) + 20000);
+    }, Math.floor(Math.random() * 20000) + 55000);
   }
   return (
     <section className="lokacja-section">
@@ -81,7 +98,7 @@ function Ogrodek() {
               className="you"
             />
             {showPokemon &&
-              pokemonSpawned.map((x: any,index:number) => (
+              pokemonSpawned.map((x: any, index: number) => (
                 <img
                   key={x + 1}
                   src={`../assets/Images/${x[0]}.png`}
@@ -93,7 +110,7 @@ function Ogrodek() {
                   }}
                   alt={x[0]}
                   onClick={() => {
-                    pokemonClicked(x[0],index);
+                    pokemonClicked(x[0], index);
                   }}
                 />
               ))}

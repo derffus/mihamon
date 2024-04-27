@@ -1,17 +1,18 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./Gra.scss";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSuitcase, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { atom, useAtom } from "jotai";
 
-export const Eq = atom<string[]>([]);
-export const Name = atom<string>("");
+export const Name = atom<string>("derf");
+export const Pokemony = atom<string[]>([]);
+export const Eq = atom<string[][]>([]);
 
 function Gra() {
-  const [eq, setEq] = useAtom(Eq);
+  const [pokemony, setPokemony] = useAtom(Pokemony);
   const nowyPokemon = (pokemon: string) => {
-    setEq([...eq, pokemon]);
+    setPokemony([...pokemony, pokemon]);
   };
 
   const location = useLocation();
@@ -27,8 +28,6 @@ function Gra() {
     else alert("Imię musi mieć minimalnie 3 znaki");
     setNameTyping("");
   };
-
-  const [starterHovered, setStarterHovered] = useState<string>("");
 
   return (
     <section className="gra-section">
@@ -53,59 +52,76 @@ function Gra() {
             </form>
           )}
         </header>
-        {name && !eq[0] && (
-          <div className="startery">
-            <header>Wybierz startera:</header>
-            <div className="startery-lista">
-              <div>
-                <img
-                  src="assets/Images/mihasaur.png"
-                  onClick={() => nowyPokemon("mihasaur")}
-                  onMouseEnter={() => setStarterHovered("mihasaur")}
-                  onMouseLeave={() => setStarterHovered("")}
-                />
-                {starterHovered === "mihasaur" || window.innerWidth < 767
-                  ? "mihasaur"
-                  : ""}
-              </div>
-              <div>
-                <img
-                  src="assets/Images/mihander.png"
-                  onClick={() => nowyPokemon("mihander")}
-                  onMouseEnter={() => setStarterHovered("mihander")}
-                  onMouseLeave={() => setStarterHovered("")}
-                />
-                {starterHovered === "mihander" || window.innerWidth < 767
-                  ? "mihander"
-                  : ""}
-              </div>
-              <div>
-                <img
-                  src="assets/Images/mihtle.png"
-                  onClick={() => nowyPokemon("mihtle")}
-                  onMouseEnter={() => setStarterHovered("mihtle")}
-                  onMouseLeave={() => setStarterHovered("")}
-                />
-                {starterHovered === "mihtle" || window.innerWidth < 767
-                  ? "mihtle"
-                  : ""}
-              </div>
-            </div>
-          </div>
-        )}
+        {name && !pokemony[0] && <Startery nowyPokemon={nowyPokemon} />}
         <Outlet />
       </div>
       <Profil name={name} setName={setName} />
     </section>
   );
 }
+const ShiniesStarters = atom<boolean[]>([
+  Math.floor(Math.random() * 40) === 0,
+  Math.floor(Math.random() * 40) === 0,
+  Math.floor(Math.random() * 40) === 0,
+]);
+
+function Startery(props: any) {
+  const [starterHovered, setStarterHovered] = useState<string>("");
+  const [shiniesStarters] = useAtom(ShiniesStarters);
+  return (
+    <div className="startery">
+      <header>Wybierz startera:</header>
+      <div className="startery-lista">
+        <div>
+          <img
+            src={`assets/Images/${shiniesStarters[0] ? "s" : ""}mihasaur.png`}
+            onClick={() =>
+              props.nowyPokemon(shiniesStarters[0] ? "smihasaur" : "mihasaur")
+            }
+            onMouseEnter={() => setStarterHovered("mihasaur")}
+            onMouseLeave={() => setStarterHovered("")}
+          />
+          {starterHovered === "mihasaur" || window.innerWidth < 767
+            ? "mihasaur"
+            : ""}
+        </div>
+        <div>
+          <img
+            src={`assets/Images/${shiniesStarters[1] ? "s" : ""}mihander.png`}
+            onClick={() =>
+              props.nowyPokemon(shiniesStarters[1] ? "smihander" : "mihander")
+            }
+            onMouseEnter={() => setStarterHovered("mihander")}
+            onMouseLeave={() => setStarterHovered("")}
+          />
+          {starterHovered === "mihander" || window.innerWidth < 767
+            ? "mihander"
+            : ""}
+        </div>
+        <div>
+          <img
+            src={`assets/Images/${shiniesStarters[2] ? "s" : ""}mihtle.png`}
+            onClick={() =>
+              props.nowyPokemon(shiniesStarters[2] ? "smihtle" : "mihtle")
+            }
+            onMouseEnter={() => setStarterHovered("mihtle")}
+            onMouseLeave={() => setStarterHovered("")}
+          />
+          {starterHovered === "mihtle" || window.innerWidth < 767
+            ? "mihtle"
+            : ""}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function Lokacje() {
   const [name] = useAtom(Name);
-  const [eq] = useAtom(Eq);
+  const [pokemony] = useAtom(Pokemony);
   return (
     <>
-      {name && eq[0] && (
+      {name && pokemony[0] && (
         <div className="lokacje">
           <header>Gdzie chcesz iść?</header>
           <div className="lokacje-lista">
@@ -123,46 +139,51 @@ export function Lokacje() {
 }
 
 function Ekwipunek() {
-  const [eq] = useAtom(Eq);
-  let ekwipunek = [...eq];
-  useEffect(() => {
-    let ekwipunek = [...eq];
-    ekwipunek.push("mihgey");
-  }, []);
+  const [pokemony] = useAtom(Pokemony);
+  const [showBag, setShowBag] = useState<boolean>(false);
   return (
     <div className="ekwipunek">
-      <button className="backpack">
+      <button className="backpack" onClick={() => setShowBag(!showBag)}>
         <FontAwesomeIcon icon={faSuitcase} />
       </button>
+      {showBag && (
+        <div className="bag-opened">
+          <div className="pokemony">
+          {pokemony.map((x: string) => (
+            <div><img src={`/assets/Images/${x}.png`} alt={x} /></div>
+          ))}
+          </div>
+        </div>
+      )}
       <div className="party">
         <button>
-          {ekwipunek[0] && (
-            <img src={`/assets/Images/${ekwipunek[0]}.png`} alt={ekwipunek[0]} />
+          {pokemony[0] && (
+            <img src={`/assets/Images/${pokemony[0]}.png`} alt={pokemony[0]} />
           )}
         </button>
         <button>
-          {ekwipunek[1] && (
-            <img src={`/assets/Images/${ekwipunek[1]}.png`} alt={ekwipunek[1]} />
+          {pokemony[1] && (
+            <img src={`/assets/Images/${pokemony[1]}.png`} alt={pokemony[1]} />
           )}
         </button>
         <button>
-          {ekwipunek[2] && (
-            <img src={`/assets/Images/${ekwipunek[2]}.png`} alt={ekwipunek[2]} />
+          {pokemony[2] && (
+            <img src={`/assets/Images/${pokemony[2]}.png`} alt={pokemony[2]} />
           )}
         </button>
         <button>
-          {ekwipunek[3] && (
-            <img src={`/assets/Images/${ekwipunek[3]}.png`} alt={ekwipunek[3]} />
+          {pokemony[3] && (
+            <img src={`/assets/Images/${pokemony[3]}.png`} alt={pokemony[3]} />
           )}
         </button>
         <button>
-          {ekwipunek[4] && (
-            <img src={`/assets/Images/${ekwipunek[4]}.png`} alt={ekwipunek[4]} />
+          {pokemony[4] && (
+            <img src={`/assets/Images/${pokemony[4]}.png`} alt={pokemony[4]} />
           )}
         </button>
         <button>
-          {ekwipunek[5] && (
-            <img src={`/assets/Images/${ekwipunek[5]}.png`} alt={ekwipunek[5]} />
+          {pokemony[5] && (
+            <img src={`/assets/Images/${pokemony[5]}.png`} alt={pokemony[5]} />
           )}
         </button>
       </div>
